@@ -3,30 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Flashcards</title>
-
-<!-- iPhone Home Screen Icon -->
-<link rel="apple-touch-icon" href="/icon.png">
-<link rel="icon" href="/icon.png">
-
-<!-- Make it feel like an app -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Flashcards">
-
-<!-- Theme color -->
-<meta name="theme-color" content="#0e0e0e">
-
-
+<title>Francolang Flashcards</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#0e0e0e; --card-bg:#1a1a1a; --card-back:#1c1a2e;
-    --accent:#f5c842; --accent2:#a78bfa;
-    --text:#f0f0f0; --muted:#555; --border:#2a2a2a;
-    --green:#4ade80; --red:#f87171;
-  }
+  :root{--bg:#0e0e0e;--card-bg:#1a1a1a;--card-back:#1c1a2e;--accent:#f5c842;--accent2:#a78bfa;--text:#f0f0f0;--muted:#555;--border:#2a2a2a;--green:#4ade80;--red:#f87171;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 60px;overflow-x:hidden;}
   body::before{content:'';position:fixed;top:-200px;left:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(167,139,250,0.06) 0%,transparent 70%);pointer-events:none;z-index:0;}
@@ -36,9 +16,14 @@
   .logo{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
   h1{font-size:28px;font-weight:800;line-height:1.1;}
   h1 span{color:var(--accent2);}
-  .nav-tabs{display:flex;gap:4px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:4px;margin-bottom:24px;}
+  .nav-tabs{display:flex;gap:4px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:4px;margin-bottom:20px;}
   .nav-tab{flex:1;padding:10px;border-radius:10px;border:none;background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;}
   .nav-tab.active{background:var(--accent);color:#000;}
+  /* Class filter */
+  .class-filter{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+  .class-filter::-webkit-scrollbar{display:none;}
+  .cf-btn{flex-shrink:0;padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+  .cf-btn.active{background:var(--accent2);color:#000;border-color:var(--accent2);}
   .deck-selector{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
   .deck-selector::-webkit-scrollbar{display:none;}
   .deck-btn{flex-shrink:0;padding:7px 14px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
@@ -63,7 +48,7 @@
   .card-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:14px;align-self:flex-start;}
   .card-back .card-label{color:var(--accent2);opacity:0.7;}
   .card-content{font-size:28px;font-weight:800;text-align:center;line-height:1.2;font-family:'DM Mono',monospace;}
-  .card-back .card-content{font-size:18px;font-weight:500;color:#e0d9ff;}
+  .card-back .card-content{font-size:17px;font-weight:500;color:#e0d9ff;}
   .card-category{margin-top:14px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-family:'DM Mono',monospace;align-self:flex-start;}
   .tap-hint{margin-top:12px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
   .answer-btns{display:flex;gap:12px;margin-bottom:16px;opacity:0;transform:translateY(8px);transition:all 0.3s ease;pointer-events:none;}
@@ -124,7 +109,7 @@
 <body>
 <div class="app">
   <header>
-    <div class="logo">AnjanGurz</div>
+    <div class="logo">Francolang</div>
     <h1>Flash<span>cards</span></h1>
   </header>
 
@@ -134,8 +119,9 @@
     <button class="nav-tab" onclick="showPanel('manage')">✎ My Cards</button>
   </div>
 
-  <!-- STUDY -->
+  <!-- STUDY PANEL -->
   <div id="studyPanel">
+    <div class="class-filter" id="classFilter"></div>
     <div class="deck-selector" id="deckSelector"></div>
     <div class="progress-wrap">
       <div class="progress-info"><span id="progressText">Card 1</span><span id="progressPct">0%</span></div>
@@ -149,7 +135,7 @@
     <div class="card-container" id="cardContainer" onclick="flipCard()">
       <div class="card" id="card">
         <div class="card-face card-front">
-          <div class="card-label">Pronunciation</div>
+          <div class="card-label">French</div>
           <div class="card-content" id="cardFront">—</div>
           <div class="card-category" id="cardCategory"></div>
           <div class="tap-hint">↺ Tap to reveal</div>
@@ -178,16 +164,16 @@
     </div>
   </div>
 
-  <!-- ADD CARD -->
+  <!-- ADD PANEL -->
   <div id="addPanel" style="display:none">
     <p class="section-title">New Flashcard</p>
     <div class="form-group">
       <label class="form-label">Front — what you see</label>
-      <input class="form-input" id="inputFront" type="text" placeholder="e.g.  OU  or  Silent final T" autocomplete="off"/>
+      <input class="form-input" id="inputFront" type="text" placeholder="e.g.  le marché  or  Futur proche rule" autocomplete="off"/>
     </div>
     <div class="form-group">
-      <label class="form-label">Back — pronunciation / answer</label>
-      <textarea class="form-textarea" id="inputBack" placeholder="e.g.  OO sound — fou=foo, vous=voo"></textarea>
+      <label class="form-label">Back — meaning / answer</label>
+      <textarea class="form-textarea" id="inputBack" placeholder="e.g.  the market"></textarea>
     </div>
     <div class="form-group">
       <label class="form-label">Deck</label>
@@ -200,7 +186,7 @@
     <button class="save-btn" onclick="saveCard()">Save Card</button>
   </div>
 
-  <!-- MY CARDS -->
+  <!-- MANAGE PANEL -->
   <div id="managePanel" style="display:none">
     <div class="my-cards-header">
       <p class="section-title" style="margin:0">My Added Cards</p>
@@ -214,17 +200,21 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// ── BUILT-IN DECKS ─────────────────────────────────────────────────────────
+// Format: [front, back, deckName, classNumber]
 const BUILTIN = {
-  "Alphabet":[
+
+  // ═══ CLASS 01 ═══
+  "C1: Alphabet": [
     ["A","Ah (as in father)"],["B","Bay"],["C","Say"],["D","Day"],["E","Uh"],
     ["F","Ef"],["G","Jay"],["H","Ash — silent in most words"],["I","EE"],["J","Jee"],
     ["K","Kah"],["L","El"],["M","Em"],["N","En"],["O","Oh"],["P","Pay"],["Q","Kew"],
     ["R","Egh — guttural throat sound"],["S","Ess"],["T","Tay"],["U","Ew — lips rounded"],
     ["V","Vay"],["W","Dooble-Vay"],["X","EEks"],["Y","EEgrayk"],["Z","Zed"],
   ],
-  "Combos":[
+  "C1: Combos": [
     ["OI","WA — moi=mwa, noir=nwar, toi=twa"],["OU","OO — fou=foo, vous=voo, jour=zhoor"],
-    ["EAU","OH — eau=oh, beau=bo, niveau=ni-vo"],["AI","AY — mais=meh, aimer=ehmay, chaise=shez"],
+    ["EAU","OH — eau=oh, beau=bo, niveau=ni-vo"],["AI","AY — mais=meh, chaise=shez"],
     ["EI","AY — reine=ren, peine=pen, seize=sez"],["AU","OH — chaud=sho, faux=fo"],
     ["AN","AHN — grand=grahn, chant=shahn, plan=plahn"],["ON","ON — bon=bon, maison=mehzon"],
     ["IEN","IYEN — chien=shyan, parisien=pareesyan"],["UI","WEE — nuit=nwee, fruit=frwee"],
@@ -233,11 +223,11 @@ const BUILTIN = {
     ["IN","AN — linge=lenj, vingt=vent, prince=prens"],["QU","K — quand=kahn, quel=kel, quatre=katr"],
     ["PH","F — photo=foto, téléphone=taylaydon"],["TION","SYON — nation=nasyon, attention=atansyon"],
     ["EZ","AY — parlez=parlay, aimez=emmay, allez=ahlay"],["GN","NYE — montagne=montahnyuh"],
-    ["S between vowels","Z — rose=roz, maison=mayzon, réseau=rayzo"],
-    ["TH","T — thé=tay, thèse=tayz"],["ILL","IY — fille=feey, famille=famee"],
-    ["SS","S — passer=pasay, tasse=tas"],["-ER ending","AY — manger=mangay, parler=parlay"],
+    ["S between vowels","Z — rose=roz, maison=mayzon"],["TH","T — thé=tay, thèse=tayz"],
+    ["ILL","IY — fille=feey, famille=famee"],["SS","S — passer=pasay, tasse=tas"],
+    ["-ER ending","AY — manger=mangay, parler=parlay"],
   ],
-  "Silent":[
+  "C1: Silent Letters": [
     ["Silent final S","NOT pronounced — gris=gri (grey)"],
     ["Silent final T","NOT pronounced — chat=cha (cat)"],
     ["Silent final D","NOT pronounced — grand=gran (big)"],
@@ -246,64 +236,300 @@ const BUILTIN = {
     ["Silent final E","NOT pronounced — porte=port (door)"],
     ["CaReFuL rule","Final C, R, F, L are PRONOUNCED. All others usually SILENT."],
   ],
-  "Accents":[
+  "C1: Accents": [
     ["é (accent aigu)","AY — été=aytay, café=kafay, bébé=baybay"],
     ["è (accent grave)","EH like 'e' in bed — père=pehr, mère=mehr, crème=krehm"],
     ["ê (circumflex)","Lengthened vowel — tête=teht, forêt=foreh"],
-    ["à (grave on A)","Same A sound but changes meaning — là=lah (there) vs la (the)"],
-    ["è at end of word","Usually ends with S — très, après, près"],
+    ["à (grave on A)","Same A sound but distinguishes meaning — là=lah (there) vs la (the)"],
     ["é vs è — how to choose?","Silent E in next syllable → use è. Otherwise → use é."],
   ],
-  "Pronouns":[
+  "C1: Pronouns": [
     ["Je","I"],["Tu","You — informal, friends & family"],["Il / Elle","He / She"],
     ["On","We — informal/casual"],["Nous","We — formal"],
     ["Vous","You — formal singular OR any plural"],["Ils / Elles","They — Ils=masc, Elles=fem"],
-    ["Tu vs Vous","Tu = casual, close people. Vous = formal, strangers, superiors, groups"],
+    ["Tu vs Vous","Tu=casual, close people. Vous=formal, strangers, superiors, groups"],
   ],
-  "Liaison":[
+  "C1: Liaison": [
     ["What is La Liaison?","Pronouncing a silent final consonant because next word starts with vowel or silent H. Ex: les enfants = lez enfants"],
-    ["S / X in liaison","→ Z sound: les enfants=lez enfants, dix oranges=diz oranges"],
-    ["D in liaison","→ T sound: grand homme=grant homme"],
-    ["F in liaison","→ V sound: vif argent=viv argent"],
-    ["ALWAYS: Determiner+Noun","les ours = lez ours"],
-    ["ALWAYS: Pronoun+Verb","nous écrivons = nouz écrivons"],
-    ["ALWAYS: Adjective+Noun","bons amis = bonz amis"],
-    ["NEVER: after 'et'","un chat / étrange — NO liaison after et"],
-    ["NEVER: before aspirated H","les / héros — NO liaison"],
-    ["NEVER: after punctuation","No liaison after . , ? ! ; :"],
+    ["S/X in liaison","→ Z: les enfants=lez enfants, dix oranges=diz oranges"],
+    ["D in liaison","→ T: grand homme=grant homme"],["F in liaison","→ V: vif argent=viv argent"],
+    ["ALWAYS: Determiner+Noun","les ours=lez ours"],["ALWAYS: Pronoun+Verb","nous écrivons=nouz écrivons"],
+    ["ALWAYS: Adjective+Noun","bons amis=bonz amis"],["NEVER: after 'et'","un chat / étrange — NO liaison"],
+    ["NEVER: before aspirated H","les / héros — NO liaison"],["NEVER: after punctuation","No liaison after . , ? ! ; :"],
     ["NEVER: before un, huit, onze","les / onze ans — NO liaison"],
+  ],
+
+  // ═══ CLASS 02 ═══
+  "C2: C, Ç and CU": [
+    ["C + A/O/U","KA-KO-KU sound — café, cornichon, culture"],
+    ["ç + A/O/U","SA-SO-SU sound — leçon, reçu, ça"],
+    ["C + E/I/Y","SE-SI sound — cerise, cible, cygne"],
+    ["C + U (to get KE/KI)","Insert U → cueillir, cuisinier"],
+    ["ça","that / it — pronounced SA"],["leçon","lesson — ç makes it SA sound"],
+    ["café","coffee — C+A = KA sound"],
+  ],
+  "C2: G, GE and GU": [
+    ["G + A/O/U","GA-GO-GU (hard G) — gâteau, gomme, guitare"],
+    ["G + E to make JA/JO","Insert E → mangeons, plongeons"],
+    ["G + E/I/Y","JE-JI (soft G) — gilet, géant"],
+    ["G + U (to get GUE/GUI)","Add U → guerre, fatigue, guitare"],
+    ["gâteau","cake — hard G"],["gilet","vest — soft G (JE sound)"],["guerre","war — GUE keeps hard G"],
+  ],
+  "C2: H Silent vs Aspirated": [
+    ["H muet (silent H)","Silent H — allows elision and liaison. Ex: l'homme, l'hôtel, l'habitude"],
+    ["H aspiré (aspirated H)","Prevents elision and liaison. Use le/la not l'. Ex: le héros, la honte"],
+    ["l'homme","the man — H muet, elision allowed"],["l'hôtel","the hotel — H muet"],
+    ["l'habitude","the habit — H muet"],["le héros","the hero — H aspiré, NO elision"],
+    ["la honte","the shame — H aspiré"],["le haricot","bean — H aspiré"],
+  ],
+  "C2: R after consonants": [
+    ["R after F, C, T, P, S","Slightly stronger/harsher R sound, almost like 'kh'"],
+    ["frère","brother — R after F, pronounced frkhère"],["croire","to believe — R after C"],
+    ["trop","too much — R after T"],["près","near — R after P"],
+  ],
+  "C2: Numbers 0-20": [
+    ["0","Zéro"],["1","Un"],["2","Deux"],["3","Trois"],["4","Quatre"],["5","Cinq"],
+    ["6","Six"],["7","Sept"],["8","Huit"],["9","Neuf"],["10","Dix"],
+    ["11","Onze"],["12","Douze"],["13","Treize"],["14","Quatorze"],["15","Quinze"],
+    ["16","Seize"],["17","Dix-sept"],["18","Dix-huit"],["19","Dix-neuf"],["20","Vingt"],
+  ],
+  "C2: Days & Months": [
+    ["Lundi","Monday"],["Mardi","Tuesday"],["Mercredi","Wednesday"],["Jeudi","Thursday"],
+    ["Vendredi","Friday"],["Samedi","Saturday"],["Dimanche","Sunday"],
+    ["Janvier","January"],["Février","February"],["Mars","March"],["Avril","April"],
+    ["Mai","May"],["Juin","June"],["Juillet","July"],["Août","August"],
+    ["Septembre","September"],["Octobre","October"],["Novembre","November"],["Décembre","December"],
+    ["Le printemps","Spring"],["L'été","Summer"],["L'automne","Autumn"],["L'hiver","Winter"],
+  ],
+  "C2: Greetings": [
+    ["Bonjour","Good morning / Hello (formal)"],["Bonsoir","Good evening"],
+    ["Salut","Hi / Hello (informal) OR Goodbye"],["Coucou","Hi/Hello (very informal)"],
+    ["Au revoir","Goodbye"],["À bientôt","See you soon"],["Bonne nuit","Good night"],
+    ["À demain","See you tomorrow"],["À plus tard / À toute","See you later"],
+    ["Comment allez-vous ?","How are you? (formal)"],["Ça va ? / Comment ça va ?","How are you? (informal)"],
+    ["Je vais bien, merci et vous ?","I'm fine thank you, and you? (formal)"],
+    ["Je vais bien, merci et toi ?","I'm fine thank you, and you? (informal)"],
+    ["Monsieur","Sir / Mr"],["Madame","Mrs / Ma'am"],
+    ["S'il vous plaît","Please (formal)"],["S'il te plaît","Please (informal)"],
+    ["Excusez-moi","Excuse me (formal)"],["Pardon","Pardon / Sorry"],
+    ["Je m'appelle...","My name is..."],
+  ],
+
+  // ═══ CLASS 03 ═══
+  "C3: Articles": [
+    ["le","Definite article — masculine singular: le chien (the dog)"],
+    ["la","Definite article — feminine singular: la maison (the house)"],
+    ["l'","Definite article — before vowel sound: l'arbre (the tree)"],
+    ["les","Definite article — all plural: les enfants (the children)"],
+    ["un","Indefinite article — masculine singular: un livre (a book)"],
+    ["une","Indefinite article — feminine singular: une pomme (an apple)"],
+    ["des","Indefinite article — plural: des enfants (some children)"],
+    ["Défini vs Indéfini","Défini (le/la/l'/les) = specific/known noun. Indéfini (un/une/des) = non-specific/new noun"],
+  ],
+  "C3: Verb Aller": [
+    ["Je vais","I go"],["Tu vas","You go (informal)"],["Il/Elle/On va","He/She/We go"],
+    ["Nous allons","We go"],["Vous allez","You go (formal/plural)"],["Ils/Elles vont","They go"],
+    ["Aller — use","To go / to be going. Also used to build Futur Proche with infinitive"],
+  ],
+  "C3: City Vocabulary": [
+    ["l'avenue (f.)","avenue"],["le boulevard","boulevard"],["le carrefour","crossroads / intersection"],
+    ["le pont","bridge"],["le quai","platform / embankment"],
+    ["la rivière","river — small"],["le fleuve","river — big, flows into the sea"],["la rue","street"],
+    ["la banque","bank"],["la bibliothèque","library"],["la cathédrale / l'église","cathedral / church"],
+    ["le centre-ville","city center / downtown"],["l'école (f.)","school"],["la gare","train station"],
+    ["le jardin / le parc","public garden / park"],["la mairie","town hall / city hall"],
+    ["le musée","museum"],["la police","police station"],["la poste","post office"],
+    ["le quartier","neighborhood / district"],["le théâtre","theater"],["la tour","tower"],
+  ],
+  "C3: -ER Verb Conjugation": [
+    ["How to conjugate -ER verbs","Remove -er → get stem. Add: je=-e, tu=-es, il=-e, nous=-ons, vous=-ez, ils=-ent"],
+    ["je parle","I speak"],["tu parles","you speak"],["il/elle parle","he/she speaks"],
+    ["nous parlons","we speak"],["vous parlez","you speak (formal/plural)"],["ils/elles parlent","they speak"],
+  ],
+  "C3: Verb Descendre": [
+    ["Je descends","I go down / I get off"],["Tu descends","You go down (informal)"],
+    ["Il/Elle descend","He/She goes down"],["Nous descendons","We go down"],
+    ["Vous descendez","You go down (formal/plural)"],["Ils/Elles descendent","They go down"],
+  ],
+  "C3: Verb Prendre": [
+    ["Je prends","I take"],["Tu prends","You take (informal)"],["Il/Elle prend","He/She takes"],
+    ["Nous prenons","We take"],["Vous prenez","You take (formal/plural)"],["Ils/Elles prennent","They take"],
+  ],
+  "C3: Directions": [
+    ["Excusez-moi, je cherche...","Excuse me, I'm looking for..."],
+    ["Où est... s'il vous plaît ?","Where is... please?"],
+    ["Allez / Continuez tout droit","Go straight ahead"],["Allez à gauche","Go to the left"],
+    ["Allez à droite","Go to the right"],["Prenez la première rue à droite","Take the first street on the right"],
+    ["Tournez à gauche / à droite","Turn left / right"],["Traversez la rue","Cross the street"],
+    ["Passez devant...","Pass in front of..."],["la première (1re)","the first"],
+    ["la deuxième (2e)","the second"],["la troisième (3e)","the third"],
+  ],
+  "C3: Transport": [
+    ["en bus","by bus"],["en métro","by metro"],["en moto","by motorcycle"],
+    ["à pied","on foot"],["en taxi","by taxi"],["en train","by train"],
+    ["à vélo","by bicycle"],["en voiture","by car"],["en scooter","by scooter"],["en tramway","by tram"],
+    ["Tu prends la ligne X jusqu'à...","You take line X until..."],
+    ["Tu changes à la station...","You change at the station..."],
+    ["Tu descends à l'arrêt...","You get off at the stop..."],
+  ],
+  "C3: Quel (Interrogative)": [
+    ["Quel","Which/What — masculine singular: Quel livre lis-tu?"],
+    ["Quelle","Which/What — feminine singular: Quelle heure est-il?"],
+    ["Quels","Which/What — masculine plural: Quels films as-tu vus?"],
+    ["Quelles","Which/What — feminine plural: Quelles fleurs préfères-tu?"],
+  ],
+  "C3: Professions": [
+    ["Masculine -e → Feminine -e","Same form: journaliste → journaliste"],
+    ["Masculine -r → Feminine -re","professeur → professeure"],
+    ["Masculine -er → Feminine -ère","infirmier → infirmière"],
+    ["Masculine -eur → Feminine -euse","coiffeur → coiffeuse"],
+    ["Masculine -ien → Feminine -ienne","pharmacien → pharmacienne"],
+    ["Masculine -teur → Feminine -trice","acteur → actrice"],
+  ],
+  "C3: Large Numbers": [
+    ["100","cent"],["1 000","mille"],["10 000","dix mille"],["100 000","cent mille"],
+    ["1 000 000","un million"],["1 000 000 000","un milliard"],
+  ],
+
+  // ═══ CLASS 04 ═══
+  "C4: Verb Payer": [
+    ["Je paie / Je paye","I pay"],["Tu paies / Tu payes","You pay (informal)"],
+    ["Il/Elle paie","He/She pays"],["Nous payons","We pay"],
+    ["Vous payez","You pay (formal/plural)"],["Ils/Elles paient","They pay"],
+    ["Je paie en espèces","I pay in cash"],["Vous payez comment?","How would you like to pay?"],
+  ],
+  "C4: Shopping Phrases": [
+    ["C'est à qui ?","Who's next? / Whose is it? (shopkeeper)"],
+    ["Qu'est-ce que je vous sers ?","What can I get you? (shopkeeper)"],
+    ["Je voudrais...","I would like... (polite)"],["Est-ce que vous avez...?","Do you have...?"],
+    ["Combien coûte... ?","How much does ... cost?"],["Ce sera tout.","That will be all."],
+    ["la carte bancaire / la carte bleue","bank card / debit card"],
+    ["le chèque","cheque / check"],["les espèces","cash"],
+    ["la pièce","coin"],["le billet","banknote / bill"],
+  ],
+  "C4: Plural of Nouns": [
+    ["Most nouns → plural","Add -s: pomme → pommes (the -s is silent)"],
+    ["-eau/-au/-eu → plural","Add -x: bateau→bateaux, cadeau→cadeaux, jeu→jeux"],
+    ["-al → plural","Change to -aux: animal→animaux, journal→journaux"],
+    ["-s/-x/-z → plural","No change: choix→choix, nez→nez, prix→prix"],
+    ["Exception: un bal","→ des bals (NOT baux)"],["Exception: un festival","→ des festivals"],
+  ],
+  "C4: Verb Acheter": [
+    ["J'achète","I buy"],["Tu achètes","You buy (informal)"],["Il/Elle achète","He/She buys"],
+    ["Nous achetons","We buy"],["Vous achetez","You buy (formal/plural)"],["Ils/Elles achètent","They buy"],
+  ],
+  "C4: Prepositions of Place": [
+    ["à + le → au","Masculine singular place: au marché (at the market)"],
+    ["à + la → à la","Feminine singular place: à la piscine (at the pool)"],
+    ["à + l' → à l'","Before vowel: à l'aéroport (at the airport)"],
+    ["à + les → aux","Plural: aux caisses (at the checkouts)"],
+    ["chez + person","At someone's place: chez le dentiste, chez mon ami"],
+    ["Je vais à l'école","I am going to school — use À with places"],
+    ["Je vais chez mon ami","I am going to my friend's — use CHEZ with people"],
+  ],
+  "C4: Food Shops": [
+    ["le marché","the market"],["le/la marchand(e)","the merchant / seller"],
+    ["la boucherie / le boucher","butcher's shop / butcher"],
+    ["la boulangerie / le boulanger","bakery / baker"],
+    ["la fromagerie / le fromager","cheese shop / cheesemonger"],
+    ["la poissonnerie / le poissonnier","fish shop / fishmonger"],
+    ["le primeur","greengrocer (fresh fruits and vegetables)"],
+  ],
+  "C4: Food Vocabulary": [
+    ["la carotte","carrot"],["l'oignon","onion"],["le poireau","leek"],
+    ["le poivron","bell pepper"],["la pomme de terre","potato"],["la tomate","tomato"],
+    ["la salade","lettuce / salad"],["l'ananas","pineapple"],["la banane","banana"],
+    ["le citron","lemon"],["la fraise","strawberry"],["l'orange","orange"],
+    ["la pêche","peach"],["la poire","pear"],["la pomme","apple"],["le raisin","grape"],
+    ["le pain","bread"],["la baguette","baguette"],["le croissant","croissant"],
+    ["le pain au chocolat","chocolate croissant"],["la tarte","tart / pie"],
+    ["le beurre","butter"],["la crème","cream"],["le fromage","cheese"],
+    ["le lait","milk"],["le yaourt","yogurt"],["l'œuf","egg"],
+    ["le poisson","fish"],["les fruits de mer","seafood"],["la viande","meat"],
+    ["le café","coffee"],["l'eau","water"],["le jus de fruits","fruit juice"],["le thé","tea"],
+  ],
+  "C4: Quantities": [
+    ["une barquette de...","a tray of..."],["une bouteille de...","a bottle of..."],
+    ["un kilo de...","a kilo of..."],["un morceau de...","a piece of..."],
+    ["une tranche de...","a slice of..."],["une part de...","a portion/slice of..."],
+    ["un peu de / d'","a little bit of"],["beaucoup de / d'","a lot of"],
+    ["pas de / d'","no / not any (negative quantity)"],
+  ],
+  "C4: Partitive Articles": [
+    ["du (de + le)","some — masculine singular: du café (some coffee)"],
+    ["de la","some — feminine singular: de la mousse (some mousse)"],
+    ["de l'","some — before vowel/silent H: de l'huile (some oil)"],
+    ["des (de + les)","some — plural: des céréales (some cereals)"],
+    ["Negative → pas de","In negative: Il n'y a pas de sel (There is no salt)"],
+  ],
+  "C4: Verb Faire": [
+    ["Je fais","I do / I make"],["Tu fais","You do (informal)"],["Il/Elle fait","He/She does/makes"],
+    ["Nous faisons","We do / We make"],["Vous faites","You do (formal/plural)"],["Ils/Elles font","They do/make"],
+    ["faire du sport","to do sports"],["faire la cuisine","to cook"],["faire une promenade","to take a walk"],
+  ],
+  "C4: Verb Manger": [
+    ["Je mange","I eat"],["Tu manges","You eat"],["Il/Elle mange","He/She eats"],
+    ["Nous mangeons","We eat"],["Vous mangez","You eat (formal/plural)"],["Ils/Elles mangent","They eat"],
+  ],
+  "C4: Restaurant": [
+    ["l'addition","the bill"],["la carte / le menu","the menu"],["la commande","the order"],
+    ["l'entrée","the starter / appetizer"],["le plat","the main course"],["le dessert","the dessert"],
+    ["la formule","the set menu / fixed-price meal"],["le plat du jour","the dish of the day"],
+    ["le pourboire","the tip"],["le serveur / la serveuse","waiter / waitress"],
+    ["le sel et le poivre","salt and pepper"],["le sucre","sugar"],
+    ["Qu'est-ce que vous prenez ?","What will you have? (waiter)"],
+    ["Je voudrais un café...","I'd like a coffee... (ordering)"],
+    ["Pour moi, une formule.","For me, a set menu."],
+  ],
+  "C4: Futur Proche": [
+    ["Futur Proche formula","Aller (present) + infinitive verb = near future (going to do)"],
+    ["Je vais travailler","I am going to work"],["Tu vas partir","You are going to leave"],
+    ["Elle va préparer le dîner","She is going to prepare dinner"],
+    ["Nous allons étudier","We are going to study"],["Ils vont regarder un film","They are going to watch a film"],
+    ["demain","tomorrow — time indicator for futur proche"],
+    ["ce soir","this evening — time indicator"],
+    ["Likes: J'aime bien","I like / I quite like"],["Likes: J'adore","I love"],
+    ["Dislikes: Je n'aime pas","I don't like"],["Dislikes: Je déteste","I hate"],
   ],
 };
 
+const CLASS_LABELS = {
+  "C1": "Class 01", "C2": "Class 02", "C3": "Class 03", "C4": "Class 04"
+};
+
 let custom = JSON.parse(localStorage.getItem('fl_custom')||'[]');
-let currentDeck='All', cards=[], idx=0, correct=0, wrong=0, flipped=false;
 let extraDecks = JSON.parse(localStorage.getItem('fl_decks')||'[]');
+let currentClass = 'All';
+let currentDeck = 'All';
+let cards = [], idx = 0, correct = 0, wrong = 0, flipped = false;
 
 function saveData(){localStorage.setItem('fl_custom',JSON.stringify(custom));localStorage.setItem('fl_decks',JSON.stringify(extraDecks));}
 
-function allDeckNames(){
-  const b=Object.keys(BUILTIN);
-  const c=[...new Set([...extraDecks,...custom.map(x=>x.deck)])].filter(d=>!b.includes(d));
-  return [...b,...c];
+function allDeckNames(classFilter){
+  const b = Object.keys(BUILTIN).filter(k => classFilter==='All' || k.startsWith(classFilter+':'));
+  const c = [...new Set([...extraDecks,...custom.map(x=>x.deck)])].filter(d=>!Object.keys(BUILTIN).includes(d));
+  return [...b, ...c];
 }
 
-function getDeckCards(name){
-  const b = name==='All'
-    ? Object.entries(BUILTIN).flatMap(([dk,arr])=>arr.map(([f,bk])=>[f,bk,dk]))
-    : (BUILTIN[name]||[]).map(([f,bk])=>[f,bk,name]);
-  const c = custom.filter(x=>name==='All'||x.deck===name).map(x=>[x.front,x.back,x.deck]);
-  return [...b,...c];
+function getDeckCards(deckName, classFilter){
+  let builtinCards = [];
+  if(deckName==='All'){
+    const keys = classFilter==='All' ? Object.keys(BUILTIN) : Object.keys(BUILTIN).filter(k=>k.startsWith(classFilter+':'));
+    builtinCards = keys.flatMap(k => BUILTIN[k].map(([f,b])=>[f,b,k]));
+  } else {
+    builtinCards = (BUILTIN[deckName]||[]).map(([f,b])=>[f,b,deckName]);
+  }
+  const myCards = custom
+    .filter(c => deckName==='All' ? (classFilter==='All' || c.deck.startsWith(classFilter+':')) : c.deck===deckName)
+    .map(c=>[c.front,c.back,c.deck]);
+  return [...builtinCards,...myCards];
 }
 
-function totalFor(name){return getDeckCards(name).length;}
+function totalFor(deckName, classFilter){ return getDeckCards(deckName, classFilter).length; }
 
 function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
 
-function toast(msg,color='var(--green)'){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.style.background=color;
-  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200);
-}
+function toast(msg,color='var(--green)'){const t=document.getElementById('toast');t.textContent=msg;t.style.background=color;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
 function showPanel(name){
   ['study','add','manage'].forEach((p,i)=>{
@@ -314,20 +540,36 @@ function showPanel(name){
   if(name==='manage')renderList();
 }
 
+function buildClassFilter(){
+  const sel = document.getElementById('classFilter');
+  sel.innerHTML='';
+  ['All','C1','C2','C3','C4'].forEach(cls=>{
+    const btn=document.createElement('button');
+    btn.className='cf-btn'+(cls===currentClass?' active':'');
+    btn.textContent = cls==='All'?'All Classes':CLASS_LABELS[cls]||cls;
+    btn.onclick=()=>{ currentClass=cls; currentDeck='All'; buildClassFilter(); buildDeckSelector(); restartDeck(); };
+    sel.appendChild(btn);
+  });
+}
+
 function buildDeckSelector(){
   const sel=document.getElementById('deckSelector');
   sel.innerHTML='';
-  ['All',...allDeckNames()].forEach(name=>{
-    const b=document.createElement('button');
-    b.className='deck-btn'+(name===currentDeck?' active':'');
-    b.textContent=`${name} (${totalFor(name)})`;
-    b.onclick=()=>{currentDeck=name;buildDeckSelector();restartDeck();};
-    sel.appendChild(b);
+  const names=['All',...allDeckNames(currentClass)];
+  names.forEach(name=>{
+    const count=totalFor(name,currentClass);
+    if(count===0)return;
+    const btn=document.createElement('button');
+    btn.className='deck-btn'+(name===currentDeck?' active':'');
+    const label = name==='All'?`All (${count})` : `${name.replace(/^C\d+: /,'')} (${count})`;
+    btn.textContent=label;
+    btn.onclick=()=>{currentDeck=name;buildDeckSelector();restartDeck();};
+    sel.appendChild(btn);
   });
 }
 
 function restartDeck(){
-  cards=shuffle(getDeckCards(currentDeck));
+  cards=shuffle(getDeckCards(currentDeck,currentClass));
   idx=0;correct=0;wrong=0;flipped=false;
   document.getElementById('completed').classList.remove('show');
   document.getElementById('cardContainer').style.display='';
@@ -340,7 +582,7 @@ function showCard(){
   const[f,b,cat]=cards[idx];
   document.getElementById('cardFront').textContent=f;
   document.getElementById('cardBack').textContent=b;
-  document.getElementById('cardCategory').textContent=cat;
+  document.getElementById('cardCategory').textContent=cat.replace(/^C\d+: /,'');
   document.getElementById('card').classList.remove('flipped');
   document.getElementById('answerBtns').classList.remove('visible');
   flipped=false;
@@ -349,55 +591,33 @@ function showCard(){
   updateProgress();
 }
 
-function flipCard(){
-  if(flipped)return;flipped=true;
-  document.getElementById('card').classList.add('flipped');
-  document.getElementById('answerBtns').classList.add('visible');
-}
-
+function flipCard(){if(flipped)return;flipped=true;document.getElementById('card').classList.add('flipped');document.getElementById('answerBtns').classList.add('visible');}
 function answer(ok){if(ok)correct++;else wrong++;idx++;updateStats();showCard();}
-
-function updateStats(){
-  document.getElementById('statRemaining').textContent=cards.length-idx;
-  document.getElementById('statCorrect').textContent=correct;
-  document.getElementById('statWrong').textContent=wrong;
-}
-
-function updateProgress(){
-  const p=Math.round((idx/cards.length)*100);
-  document.getElementById('progressFill').style.width=p+'%';
-  document.getElementById('progressText').textContent=`Card ${idx+1} of ${cards.length}`;
-  document.getElementById('progressPct').textContent=p+'%';
-}
-
+function updateStats(){document.getElementById('statRemaining').textContent=cards.length-idx;document.getElementById('statCorrect').textContent=correct;document.getElementById('statWrong').textContent=wrong;}
+function updateProgress(){const p=Math.round((idx/cards.length)*100);document.getElementById('progressFill').style.width=p+'%';document.getElementById('progressText').textContent=`Card ${idx+1} of ${cards.length}`;document.getElementById('progressPct').textContent=p+'%';}
 function shuffleDeck(){cards=shuffle(cards);idx=0;correct=0;wrong=0;updateStats();showCard();}
-
 function showCompleted(){
-  const t=correct+wrong, p=t>0?Math.round((correct/t)*100):0;
+  const t=correct+wrong,p=t>0?Math.round((correct/t)*100):0;
   document.getElementById('finalScore').textContent=p+'%';
   document.getElementById('cardContainer').style.display='none';
   document.getElementById('answerBtns').classList.remove('visible');
-  document.getElementById('completedMsg').textContent=
-    p===100?'Perfect! 🔥 CLB 7 incoming.':p>=80?'Solid! Review the missed ones.':p>=60?'Good progress — keep repeating.':'Every rep builds the foundation. Go again!';
+  document.getElementById('completedMsg').textContent=p===100?'Perfect! 🔥 CLB 7 incoming.':p>=80?'Solid! Review the missed ones.':p>=60?'Good progress — keep repeating.':'Every rep builds the foundation. Go again!';
   document.getElementById('completed').classList.add('show');
 }
 
 function populateDeckSelect(){
   const sel=document.getElementById('inputDeck');
   sel.innerHTML='';
-  allDeckNames().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
+  [...Object.keys(BUILTIN),...extraDecks].forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
 }
 
 function createNewDeck(){
   const inp=document.getElementById('newDeckName');
-  const name=inp.value.trim();
-  if(!name)return;
+  const name=inp.value.trim();if(!name)return;
   if(!extraDecks.includes(name)&&!Object.keys(BUILTIN).includes(name))extraDecks.push(name);
-  saveData();inp.value='';
-  populateDeckSelect();
+  saveData();inp.value='';populateDeckSelect();
   document.getElementById('inputDeck').value=name;
-  buildDeckSelector();
-  toast('✓ Deck created!');
+  buildDeckSelector();toast('✓ Deck created!');
 }
 
 function saveCard(){
@@ -409,8 +629,7 @@ function saveCard(){
   saveData();
   document.getElementById('inputFront').value='';
   document.getElementById('inputBack').value='';
-  buildDeckSelector();
-  toast('✓ Card saved!');
+  buildDeckSelector();toast('✓ Card saved!');
 }
 
 function renderList(){
@@ -420,15 +639,13 @@ function renderList(){
   if(!custom.length){list.innerHTML='<div class="empty-state">No custom cards yet.<br>Go to ＋ Add Card to create some!</div>';return;}
   list.innerHTML='';
   [...custom].reverse().forEach(card=>{
-    const el=document.createElement('div');
-    el.className='card-item';
+    const el=document.createElement('div');el.className='card-item';
     el.innerHTML=`<div class="card-item-text"><div class="card-item-front">${card.front}</div><div class="card-item-back">${card.back}</div><div class="card-item-deck">${card.deck}</div></div><button class="delete-btn" onclick="deleteCard(${card.id})">✕</button>`;
     list.appendChild(el);
   });
 }
 
 function deleteCard(id){custom=custom.filter(c=>c.id!==id);saveData();buildDeckSelector();renderList();}
-
 function clearAll(){if(!confirm('Delete all your custom cards?'))return;custom=[];saveData();buildDeckSelector();renderList();}
 
 document.addEventListener('keydown',e=>{
@@ -438,8 +655,7 @@ document.addEventListener('keydown',e=>{
   if((e.key==='ArrowLeft'||e.key==='ArrowDown')&&flipped)answer(false);
 });
 
-buildDeckSelector();
-restartDeck();
+buildClassFilter();buildDeckSelector();restartDeck();
 </script>
 </body>
 </html>
